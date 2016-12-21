@@ -7,6 +7,40 @@
 </head>
 <body>
 <script>
+const currentSequence = [];
+const fullSequence = [
+  'arrowUp',
+  'arrowUp',
+  'arrowDown',
+  'arrowDown',
+  'arrowLeft',
+  'arrowRight',
+  'arrowLeft',
+  'arrowRight',
+  'a',
+  'b',
+  'Enter'
+];
+const code = new RegExp( fullSequence.join(''), 'i' );
+
+function log( { key } ) {
+  const start = -( fullSequence.length - 1 );
+  const end = currentSequence.length - fullSequence.length;
+  currentSequence.splice( start, end );
+  currentSequence.push( key );
+  checkMatch();
+  console.log( currentSequence );
+}
+
+function checkMatch() {
+
+  if ( code.test( currentSequence.join('') ) ) {
+    alert('YOU DID IT');
+  }
+}
+
+document.addEventListener( 'keyup', log );
+
 </script>
 </body>
 </html>

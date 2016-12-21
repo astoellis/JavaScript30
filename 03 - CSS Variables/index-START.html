@@ -26,6 +26,10 @@
       misc styles, nothing to do with CSS variables
     */
 
+   img {
+     transition: all .5s;
+   }
+
     body {
       text-align: center;
     }
@@ -53,6 +57,49 @@
   </style>
 
   <script>
+
+    let inputEls = Array.prototype
+    .slice.call( document.querySelectorAll('input') );
+
+    let image = document.querySelector('img');
+
+    inputEls.forEach( el => {
+      el.addEventListener( 'change', getInputVal );
+      handleValChange( el.name, el.value );
+    });
+
+    function handleValChange( name, val ) {
+
+      let style = image.style;
+      switch( name ) {
+        case 'spacing':
+          let bgColor = document.querySelector(`input[name='base']`).value;
+          image.style.border = `${val}px solid ${bgColor}`;
+          break;
+        case 'blur':
+          image.style.filter = `blur(${val}px)`;
+          break;
+        case 'base':
+        image.style['border-color'] = `${val}`;
+          break;
+        default:
+          console.log( 'you fucked up' );
+      }
+    }
+
+    function getInputVal( ev ) {
+      if ( !!~inputEls.indexOf( ev.currentTarget ) ) {
+        var { value, name } = ev.currentTarget;
+
+        handleValChange( name, value );
+      }
+
+    }
+
+
+
+
+
   </script>
 
 </body>

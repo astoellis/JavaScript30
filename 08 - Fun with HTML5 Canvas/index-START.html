@@ -5,13 +5,80 @@
   <title>HTML5 Canvas</title>
 </head>
 <body>
+  <div class="clear">Clear</div>
 <canvas id="draw" width="800" height="800"></canvas>
 <script>
+
+const canvas = document.getElementById('draw');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+ctx.strokeStyle = '#BADA55';
+ctx.lineJoin = 'round';
+ctx.lineCap = 'round';
+ctx.lineWidth = 50;
+
+
+
+let hue = 0;
+let ascending = true;
+let drawing = false;
+let lastX = 0;
+let lastY = 0;
+
+const clear = document.querySelector('.clear');
+clear.addEventListener( 'click', () => {
+  ctx.clearRect( 0, 0, canvas.width, canvas.height );
+});
+
+canvas.addEventListener( 'mousedown', startLine );
+canvas.addEventListener( 'mousemove', drawLine );
+canvas.addEventListener( 'mouseup', endLine );
+canvas.addEventListener( 'mouseout', endLine );
+
+
+function startLine( { offsetX, offsetY } ) {
+  [ lastX, lastY ] = [ offsetX, offsetY ];
+  drawing = true;
+  console.log( `${offsetX}, ${offsetY}`)
+}
+
+function endLine(){
+  drawing = false;
+}
+
+function drawLine({ offsetX, offsetY }){
+  if ( drawing ) {
+    ctx.strokeStyle = `hsl(${hue++}, 100%, 50%)`;
+    if ( hue >= 360 ) { hue = 0 };
+    ctx.beginPath();
+    ctx.moveTo( lastX, lastY );
+    ctx.lineTo( offsetX, offsetY );
+    ctx.stroke();
+    if ( ctx.lineWidth >= 100 || ctx.lineWidth <= 1 ) {
+      ascending = !ascending;
+    }
+    ctx.lineWidth += ascending ? 1 : -1;
+
+    [ lastX, lastY ] = [ offsetX, offsetY ];
+    console.log( `${offsetX}, ${offsetY}`)
+  }
+}
 </script>
 
 <style>
   html, body {
     margin:0;
+  }
+  .clear {
+    position: absolute;
+    height: 50px;
+    width: 100px;
+    background-color: hsl(208, 100%, 50%);
+    color: #fff;
+    text-align: center;
+    right: calc( 50% - 50px );
   }
 </style>
 

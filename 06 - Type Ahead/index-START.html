@@ -16,6 +16,45 @@
   </form>
 <script>
 const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
+let cities = [];
+
+fetch( endpoint ).then( res => {
+  res.json().then( data => {
+    cities = data;
+  } );
+});
+
+const suggestions = document.querySelector('ul.suggestions');
+const entry = document.querySelector('input.search');
+
+entry.addEventListener( 'input', searchInput );
+
+function searchInput( { currentTarget: { value } } ) {
+  const regExp = new RegExp( `${value}`, 'ig' );
+  const matchedCities = cities
+  .filter( ({ city, state }) => regExp.test( `${city}${state}` ) )
+  .map( city => Object.assign( {}, city, { regex: regExp, value } ) );
+
+  updateCities( matchedCities )
+}
+
+function updateCities( matches ) {
+  suggestions.innerHTML = matches
+  .map( makeElementText )
+  .join('');
+}
+
+function makeElementText( data ) {
+  const span = `
+  <li>
+    <span class="name">${data.city}, ${data.state}</span>
+    <span class="population">${Number(data.population).toLocaleString()}</span>
+  </li>
+  `;
+  return span.replace( data.regex, `<span class="hl">${data.value}</span>`);
+}
+
+
 
 </script>
   </body>

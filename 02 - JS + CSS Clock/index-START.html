@@ -61,11 +61,69 @@
       background:black;
       position: absolute;
       top:50%;
+      transform-origin: right;
+    }
+    .hour-hand {
+      height: 10px;
+    }
+    .min-hand {
+      height: 8px;
     }
 
   </style>
 
   <script>
+
+  const hourHand = document.querySelector('div.hour-hand');
+  const minHand = document.querySelector('div.min-hand');
+  const secHand = document.querySelector('div.second-hand');
+  const offset = 90;
+
+  function setHand( hand, deg ) {
+
+    hand.style.transition = deg === 90 ? 'none' : 'transform .02s';
+    hand.style.transform = `rotate(${deg}deg)`;
+  }
+
+  function getDegrees( val, isHour ) {
+    const degOffset = offset + ( val / ( isHour ? 12 : 60 ) * 360 );
+    console.log(degOffset);
+    return degOffset
+  }
+
+  function setHands( time ) {
+    const hr = time.getHours();
+    const min = time.getMinutes();
+    const sec = time.getSeconds();
+    console.log( sec );
+
+    const hourDegrees = getDegrees( hr, true )
+    const minDegrees  = getDegrees( min );
+    const secDegrees  = getDegrees( sec );
+
+    setHand( hourHand, hourDegrees )
+    setHand( minHand, minDegrees )
+    setHand( secHand, secDegrees )
+
+  }
+  function getNextSecond() {
+    const currentTime = new Date( Date.now() );
+
+    setHands( currentTime );
+
+    return 1000 - currentTime.getMilliseconds();
+  }
+
+
+  function timeLoop( time ) {
+    let timeout = setTimeout( () => {
+      timeLoop( getNextSecond() );
+    }, time );
+    window.timeout = timeout;
+
+  }
+
+  timeLoop( getNextSecond() );
 
 
   </script>

@@ -104,6 +104,34 @@
   </div>
 
 <script>
+
+const [ ...checkboxes ] = document.querySelectorAll(`input[type="checkbox"]`);
+let shiftPressed = false;
+let latestChecked = checkboxes[ 0 ];
+
+function updateAll( start, end, state ) {
+  const list = checkboxes.slice( start, end );
+  list.forEach( checkbox => {
+    checkbox.checked = state;
+  });
+}
+
+function checkShift( { currentTarget } ) {
+
+  if( shiftPressed ) {
+    const checked = latestChecked.checked;
+    const indexToStart = checkboxes.indexOf( latestChecked );
+    const indexToEnd   = checkboxes.indexOf( currentTarget ) + 1;
+    updateAll( indexToStart, indexToEnd, checked );
+  }
+
+  latestChecked = currentTarget;
+}
+
+checkboxes.forEach( chk => chk.addEventListener( 'change', checkShift ) );
+
+document.addEventListener( 'keydown', () => shiftPressed = true )
+document.addEventListener( 'keyup', () => shiftPressed = false )
 </script>
 </body>
 </html>
